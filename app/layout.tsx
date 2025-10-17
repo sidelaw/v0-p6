@@ -2,8 +2,9 @@ import type React from "react"
 import type { Metadata, Viewport } from "next/types"
 import { Inter, Poppins } from "next/font/google"
 import "./globals.css"
-import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeProvider } from "@/components/theme-provider"
 import { MainNav } from "@/components/main-nav"
+import { Suspense } from "react"   // ← add this
 
 const inter = Inter({
   subsets: ["latin"],
@@ -47,19 +48,20 @@ export const viewport: Viewport = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${poppins.variable} font-sans antialiased`}
         style={{
-          fontFamily: "var(--font-sf-rounded), var(--font-poppins), var(--font-inter), sans-serif",
+          fontFamily:
+            "var(--font-sf-rounded), var(--font-poppins), var(--font-inter), sans-serif",
         }}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <MainNav />
+          <Suspense fallback={null}>
+            <MainNav />   {/* ← wrap in Suspense */}
+          </Suspense>
           <main>{children}</main>
         </ThemeProvider>
       </body>
