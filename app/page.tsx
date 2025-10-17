@@ -1,6 +1,6 @@
 "use client"
 import { LayoutGrid, List, Star } from "lucide-react"
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, Suspense } from "react"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -230,8 +230,10 @@ function DashboardContent() {
 
 export default function Page() {
   return (
-    <ErrorBoundary>
-      <DashboardContent />
-    </ErrorBoundary>
+    <Suspense fallback={<div>Loading...</div>}>
+      <ErrorBoundary>
+        <DashboardContent />
+      </ErrorBoundary>
+    </Suspense>
   )
 }
