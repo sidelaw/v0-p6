@@ -9,6 +9,7 @@ export interface Project {
   funding_amount: number
   duration: string
   project_background: string
+  creator_username: string
   mission_expertise: string
   campaign_goals: string
   creator_stat_1_name: string

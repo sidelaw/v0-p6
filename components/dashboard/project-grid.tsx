@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { StatusBadge } from "@/components/ui/status-badge"
 import { ProjectProgress } from "@/components/ui/project-progress"
 import { formatCompactCurrency, capitalizeStatus } from "@/lib/utils"
-import type { Project } from "@/hooks/use-projects"
+import { Project } from "@/hooks/use-project"
 
 interface ProjectGridProps {
   projects: Project[]

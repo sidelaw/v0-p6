@@ -37,6 +37,16 @@ function getProjectCategoryById(projectsById: Map<number, any>, projectId: numbe
   return typeof cat === "string" && cat.trim().length ? cat : null
 }
 
+export function formatActivityType(s?: string) {
+  if (!s) return ""
+  const cleaned = s.replace(/_/g, " ")
+  return cleaned
+    .toLowerCase()
+    .replace(/\b\w/g, (c) => c.toUpperCase())
+  // "milestone_completed" -> "Milestone Completed"
+  // "discord update"      -> "Discord Update"
+}
+
 export function RecentUpdates() {
   const { updates, isLoading, error } = useRecentUpdates()
   const { projects, isLoading: projectsLoading } = useProjects()
@@ -140,7 +150,7 @@ export function RecentUpdates() {
 
                   {u.type && (
                     <Badge className="border-border/30 text-muted-foreground text-xs capitalize bg-white/5" style={{ borderRadius: "var(--wui-border-radius-xs)" }}>
-                      {u.type}
+                      {formatActivityType(u.type)}
                     </Badge>
                   )}
                 </div>

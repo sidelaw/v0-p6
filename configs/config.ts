@@ -1,5 +1,5 @@
-import "server-only"
 import { validateEnvironmentVariables } from "@/lib/api-helpers"
+import "dotenv/config"
 
 const requiredVars = [
   "DATABASE_URL",
