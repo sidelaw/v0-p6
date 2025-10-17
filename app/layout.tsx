@@ -2,7 +2,7 @@ import type React from "react"
 import type { Metadata, Viewport } from "next/types"
 import { Inter, Poppins } from "next/font/google"
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from '@/components/theme-provider';
 import { MainNav } from "@/components/main-nav"
 
 const inter = Inter({
