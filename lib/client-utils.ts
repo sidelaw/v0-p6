@@ -40,8 +40,6 @@ export function sortProjects(projects: Project[], sortOrder: string): Project[] 
       })
     case "at-risk":
       return sorted.sort((a, b) => (b.progress_percentage || 0) - (a.progress_percentage || 0))
-    case "not-started":
-      return sorted.filter((p) => p.status === "not-started")
     default:
       return sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
   }
