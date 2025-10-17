@@ -2,26 +2,41 @@
 export interface Project {  
   readonly id: number
   readonly name: string
-  readonly description?: string | null
+  readonly description: string
   readonly status: "active" | "completed" | "on-hold"
-  readonly github_repo?: string | null
-  readonly discord_channel?: string | null
-  readonly creator_username?: string | null
-  readonly assignee_discord_id?: string | null
-  readonly funding_amount?: number | null
-  readonly start_date?: string | null
-  readonly end_date?: string | null
+  readonly github_repo?: string
+  readonly discord_channel?: string
+  readonly creator_username?: string
+  readonly assignee_discord_id?: string
+  readonly funding_amount?: number
+  readonly start_date?: string
+  readonly end_date: string
   readonly created_at: string
   readonly updated_at: string
   readonly total_milestones?: number
   readonly completed_milestones?: number
   readonly progress_percentage?: number
-  readonly category?: string | null
-  readonly duration?: string | null
-  readonly grantee_email?: string | null
+  readonly category?: string
+  readonly duration?: string
+  readonly grantee_email?: string
   readonly creator_name?: string
   readonly creator_email?: string
   readonly active_milestone_status?: string
+  readonly proposal_link?: string
+  readonly project_background: string
+  readonly mission_expertise: string
+  readonly campaign_goals: string
+  readonly creator_stat_1_name: string
+  readonly creator_stat_1_number: number
+  readonly creator_stat_2_name: string
+  readonly creator_stat_2_number: number
+  readonly youtube_link: string
+  readonly tiktok_link: string
+  readonly twitter_link: string
+  readonly twitch_link: string
+
+
+
 }
 
 export interface Milestone {

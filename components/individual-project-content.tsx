@@ -10,9 +10,7 @@ import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import MilestoneDetailsPopup from "@/components/milestone-details-popup"
 import RecentUpdatePopup from "@/components/recent-update-popup"
-import { useProject } from "@/hooks/use-project"
 import { useMobile } from "@/hooks/use-mobile"
-import { useProjects } from "@/hooks/use-projects"
 import {
   capitalizeStatus,
   getStatusColor,
@@ -22,6 +20,8 @@ import {
   shouldShowProgressBar,
   formatCompactCurrency,
 } from "@/lib/utils"
+import { useProject } from "@/hooks/use-project"
+import { useProjects } from "@/hooks/use-projects"
 
 // ---------- Activity types / helpers ----------
 type Activity = {
