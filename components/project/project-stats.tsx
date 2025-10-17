@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
+import { Project } from "@/lib/types"
 import { getTimeLeft } from "@/lib/utils"
-import type { Project } from "@/hooks/use-project"
 
 interface ProjectStatsProps {
   project: Project

@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card"
-import type { Project } from "@/hooks/use-project"
+import { Project } from "@/lib/types"
 
 interface ProjectBannerProps {
   project: Project

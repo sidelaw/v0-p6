@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import type { Project } from "@/hooks/use-project"
+import { Project } from "@/lib/types"
 
 interface ProjectProgressProps {
   project: Project

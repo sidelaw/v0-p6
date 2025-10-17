@@ -6,7 +6,7 @@ import { StatusBadge } from "@/components/ui/status-badge"
 import { OverdueAlert } from "@/components/ui/overdue-alert"
 import { ProjectProgress } from "@/components/ui/project-progress"
 import { getOverdueMessage, shouldShowProgressBar, formatDate } from "@/lib/utils"
-import type { Milestone } from "@/hooks/use-project"
+import { Milestone } from "@/lib/types"
 
 interface MilestoneListProps {
   milestones: Milestone[]

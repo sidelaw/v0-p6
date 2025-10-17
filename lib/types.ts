@@ -39,15 +39,19 @@ export interface Project {
 
 }
 
+
 export interface Milestone {
   readonly id: number
   readonly project_id: number
+  readonly ordinal: number
   readonly title: string
-  readonly description?: string | null
-  readonly due_date?: string | null
+  readonly budget: number
+  readonly description: string
+  readonly due_date: string
+  readonly progress?: number
   readonly status: "pending" | "in-progress" | "completed" | "overdue" | "not-started"
-  readonly budget_allocated?: number | null
-  readonly completion_date?: string | null
+  readonly budget_allocated: number
+  readonly completion_date: string
   readonly created_at: string
   readonly updated_at: string
 }

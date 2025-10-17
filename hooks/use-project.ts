@@ -1,4 +1,4 @@
-import { Project } from "@/lib/types"
+import { Milestone, Project } from "@/lib/types"
 import useSWR from "swr"
 
 // export interface Project {
@@ -30,17 +30,17 @@ import useSWR from "swr"
 //   proposal_link?: string
 // }
 
-export interface Milestone {
-  id: number
-  ordinal: number
-  title: string
-  description: string
-  status: string
-  budget: number
-  due_date: string
-  completion_date: string
-  progress?: number
-}
+// export interface Milestone {
+//   id: number
+//   ordinal: number
+//   title: string
+//   description: string
+//   status: string
+//   budget: number
+//   due_date: string
+//   completion_date: string
+//   progress?: number
+// }
 
 const fetcher = async (url: string) => {
   const response = await fetch(url)
