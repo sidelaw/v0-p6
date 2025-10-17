@@ -1,5 +1,5 @@
 // Core domain types
-export interface Project {
+export interface Project {  
   readonly id: number
   readonly name: string
   readonly description?: string | null
@@ -91,7 +91,7 @@ export interface DashboardStats {
 // Webhook types
 export interface GitHubWebhookPayload {
   readonly action?: string
-  readonly commits?: readonly Array<{
+  readonly commits?: Array<{
     readonly message: string
     readonly url: string
   }>
