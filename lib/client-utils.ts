@@ -1,5 +1,5 @@
 // This file contains utilities that are safe to use in client components
-import type { Project } from "@/lib/types"
+import type { Milestone, Project } from "@/lib/types"
 
 export function formatCompactCurrency(amount: number): string {
   if (amount >= 1_000_000) {
@@ -76,4 +76,104 @@ export function paginateItems<T>(items: T[], currentPage: number, itemsPerPage: 
   const currentItems = items.slice(startIndex, endIndex)
 
   return { currentItems, totalPages, startIndex, endIndex }
+}
+
+function norm(s?: string | null): string {
+  return (s || "").trim().toLowerCase().replace(/[_\s]+/g, "-")
+}
+
+function isOverdueMilestone(m: Milestone): boolean {
+  if (!m.due_date) return false
+  const due = new Date(m.due_date).getTime()
+  const now = Date.now()
+  const status = norm(m.status)
+  // overdue if past due and not completed
+  return due < now && status !== "completed"
+}
+
+/** Define "at risk":
+ * - has a milestone due within 7 days AND
+ * - that milestone is not completed and progress < 50 (or undefined)
+ */
+function isAtRisk(projectId: number, all: Milestone[]): boolean {
+  const oneWeek = 7 * 24 * 60 * 60 * 1000
+  const now = Date.now()
+
+  return all.some((m) => {
+    if (m.project_id !== projectId || !m.due_date) return false
+    const due = new Date(m.due_date).getTime()
+    const status = norm(m.status)
+    const progress = typeof m.progress === "number" ? m.progress : 0
+    const dueSoon = due >= now && due <= now + oneWeek
+    return dueSoon && status !== "completed" && progress < 50
+  })
+}
+
+/** Choose the "current milestone" status for filtering buckets */
+function currentMilestoneStatus(projectId: number, all: Milestone[]): string {
+  const list = all
+    .filter((m) => m.project_id === projectId)
+    .sort((a, b) => (a.ordinal ?? a.id) - (b.ordinal ?? b.id))
+  if (list.length === 0) return "pending"
+  const current = list.find((m) => norm(m.status) !== "completed")
+  return current ? norm(current.status) : "completed"
+}
+
+/** Your new, clear behavior:
+ * - "new"        -> sort by created_at DESC
+ * - "oldest"     -> sort by created_at ASC
+ * - "overdue"    -> FILTER only projects that HAVE any overdue milestone (order: newest first)
+ * - "at-risk"    -> FILTER only projects that match isAtRisk (order: nearest end_date first)
+ * - "not-started"-> FILTER only projects whose current milestone status is "not-started"/"pending"
+ *                   (order: created_at DESC)
+ */
+export function filterAndSortProjects(
+  projects: Project[],
+  milestones: Milestone[],
+  sortOrder: string
+): Project[] {
+  const sortedCopy = [...projects]
+
+  switch (sortOrder) {
+    case "oldest":
+      return sortedCopy.sort(
+        (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      )
+
+    case "overdue": {
+      const only = sortedCopy.filter((p) =>
+        milestones.some((m) => m.project_id === p.id && isOverdueMilestone(m))
+      )
+      return only.sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      )
+    }
+
+    case "at-risk": {
+      const only = sortedCopy.filter((p) => isAtRisk(p.id, milestones))
+      // Optional ordering: earlier end_date first, then created_at
+      return only.sort((a, b) => {
+        const ae = a.end_date ? new Date(a.end_date).getTime() : Number.POSITIVE_INFINITY
+        const be = b.end_date ? new Date(b.end_date).getTime() : Number.POSITIVE_INFINITY
+        if (ae !== be) return ae - be
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      })
+    }
+
+    case "not-started": {
+      const only = sortedCopy.filter((p) => {
+        const st = currentMilestoneStatus(p.id, milestones)
+        return st === "not-started" || st === "pending"
+      })
+      return only.sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      )
+    }
+
+    // "new" (default)
+    default:
+      return sortedCopy.sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      )
+  }
 }
