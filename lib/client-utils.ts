@@ -27,6 +27,30 @@ export function filterProjects(projects: Project[], searchTerm: string): Project
   })
 }
 
+export function toNumberSafe(val: unknown): number {
+  if (val == null) return 0;
+  if (typeof val === "number") return Number.isFinite(val) ? val : 0;
+  if (typeof val === "bigint") return Number(val);
+  if (typeof val === "string") {
+    // strip currency symbols/commas/spaces
+    const n = Number(val.replace(/[^0-9.-]/g, ""));
+    return Number.isFinite(n) ? n : 0;
+  }
+  // Prisma.Decimal or similar
+  // decimal.js has toNumber / toString
+  const anyVal = val as any;
+  if (anyVal?.toNumber && typeof anyVal.toNumber === "function") {
+    const n = anyVal.toNumber();
+    return Number.isFinite(n) ? n : 0;
+  }
+  if (anyVal?.toString && typeof anyVal.toString === "function") {
+    const n = Number(anyVal.toString());
+    return Number.isFinite(n) ? n : 0;
+  }
+  return 0;
+}
+
+
 export function sortProjects(projects: Project[], sortOrder: string): Project[] {
   const sorted = [...projects]
   switch (sortOrder) {

@@ -17,9 +17,12 @@ import { ErrorBoundary } from "@/components/error-boundary"
 import { ProjectGridSkeleton, StatsCardSkeleton } from "@/components/dashboard/skeleton-loader"
 import { ITEMS_PER_PAGE_DESKTOP } from "@/lib/constants"
 import { cn } from "@/lib/utils"
+import { useMilestones } from "@/hooks/use-milestones"
 
 function DashboardContent() {
   const { projects, isLoading, error, refetch } = useProjects()
+  const { milestones, isLoading: msLoading, error: msErr, refetch: refetchMilestones } = useMilestones()
+
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid")
   const [currentPage, setCurrentPage] = useState(1)
   const [sortOrder, setSortOrder] = useState("new")
@@ -148,7 +151,7 @@ function DashboardContent() {
                   )}
                 </div>
               ) : viewMode === "grid" ? (
-                <ProjectGrid projects={currentPrograms} />
+                <ProjectGrid projects={currentPrograms} milestones={milestones} />
               ) : (
                 <ProjectTable projects={currentPrograms} />
               )}
@@ -170,7 +173,7 @@ function DashboardContent() {
                         )}
                         aria-label="Go to previous page"
                       >
-                        <span>Previous</span>
+                        <span className="pr-4">Previous</span>
                       </button>
                     </PaginationItem>
 

@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
-import { formatCompactCurrency } from "@/lib/client-utils"
+import { formatCompactCurrency, toNumberSafe } from "@/lib/client-utils"
 import type { Project } from "@/lib/types"
 
 interface StatsCardsProps {
@@ -10,11 +10,8 @@ interface StatsCardsProps {
 
 export function StatsCards({ projects }: StatsCardsProps) {
   const totalFunds = projects.reduce((sum, project) => {
-    const amount = project.funding_amount
-    // Convert to number and handle null/undefined/NaN cases
-    const numericAmount = typeof amount === "number" && !isNaN(amount) ? amount : 0
-    return sum + numericAmount
-  }, 0)
+    return sum + toNumberSafe(project.funding_amount);
+  }, 0);
 
   console.log("[v0] Total Funds Calculation:", {
     projectCount: projects.length,
