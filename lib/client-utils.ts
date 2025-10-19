@@ -160,13 +160,18 @@ export function filterAndSortProjects(
       })
     }
 
-    case "not-started": {
+    case "completed": {
       const only = sortedCopy.filter((p) => {
-        const st = currentMilestoneStatus(p.id, milestones)
-        return st === "not-started" || st === "pending"
+        const statusFromMilestones = currentMilestoneStatus(p.id, milestones)
+        if (statusFromMilestones !== "pending") {
+          return statusFromMilestones === "completed" // has milestones, all done
+        }
+        // no milestones → fall back to project.status
+        return norm(p.status) === "completed"
       })
+      // Optional: most recently updated first
       return only.sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
       )
     }
 

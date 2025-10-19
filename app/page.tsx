@@ -132,7 +132,7 @@ function DashboardContent() {
                       <SelectItem value="oldest">Oldest</SelectItem>
                       <SelectItem value="overdue">Overdue</SelectItem>
                       <SelectItem value="at-risk">At Risk</SelectItem>
-                      <SelectItem value="not-started">Not Started</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
                     </SelectContent>
                   </Select>
                   {/* Grid toggle */}

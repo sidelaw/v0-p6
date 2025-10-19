@@ -186,6 +186,8 @@ export function shouldShowProgressBar(status: string): boolean {
   return normalized !== "complete" && normalized !== "completed" && normalized !== "not started"
 }
 
+
+
 export function parseDurationToEndDate(startDate: string | Date, duration: string): Date | null {
   if (!startDate || !duration) return null
 
