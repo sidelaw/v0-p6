@@ -14,9 +14,6 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 
     return NextResponse.json(milestones)
   } catch (error) {
-    if (process.env.NODE_ENV === "development") {
-      console.error("[milestones][GET] error:", error)
-    }
     return NextResponse.json({ error: "Failed to fetch milestones" }, { status: 500 })
   }
 }
@@ -43,9 +40,6 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
     return NextResponse.json(milestone)
   } catch (error) {
-    if (process.env.NODE_ENV === "development") {
-      console.error("[milestones][POST] error:", error)
-    }
     return NextResponse.json({ error: "Failed to create milestone" }, { status: 500 })
   }
 }
@@ -145,9 +139,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
     return NextResponse.json(updated)
   } catch (error) {
-    if (process.env.NODE_ENV === "development") {
-      console.error("[milestones][PATCH] error:", error)
-    }
     return NextResponse.json({ error: "Failed to update milestone" }, { status: 500 })
   }
 }

@@ -16,9 +16,6 @@ async function resolveDiscordUserIdFromUsername(username?: string) {
       cache: "no-store",
     })
     if (!resp.ok) {
-      if (process.env.NODE_ENV === "development") {
-        console.warn("[projects][POST] discord search failed:", await resp.text())
-      }
       return null
     }
     const members = (await resp.json()) as Array<{
@@ -38,9 +35,6 @@ async function resolveDiscordUserIdFromUsername(username?: string) {
 
     return match?.user?.id ?? null
   } catch (e) {
-    if (process.env.NODE_ENV === "development") {
-      console.warn("[projects][POST] discord resolve error:", e)
-    }
     return null
   }
 }
@@ -202,9 +196,6 @@ export async function POST(request: NextRequest) {
           WHERE id = ${project.id}
         `
         ;(project as any).assignee_discord_id = userId
-        console.log("[projects][POST] resolved assignee_discord_id:", userId, "for project", project.id)
-      } else {
-        console.log("[projects][POST] could not resolve Discord ID for", project.creator_username)
       }
     }
 

@@ -48,7 +48,6 @@ export default function NewMilestonePage() {
         const projectData = await response.json()
         setProject(projectData)
       } catch (error) {
-        console.error("Error fetching project:", error)
         toast({
           title: "Error",
           description: "Failed to load project details.",
@@ -101,14 +100,9 @@ export default function NewMilestonePage() {
         throw new Error("At least one complete milestone is required")
       }
 
-      console.log("[v0] Creating milestones for project:", params.id)
-      console.log("[v0] Number of milestones to create:", validMilestones.length)
-      console.log("[v0] Milestone data:", validMilestones)
-
       const createdMilestones = []
       for (let i = 0; i < validMilestones.length; i++) {
         const milestone = validMilestones[i]
-        console.log(`[v0] Creating milestone ${i + 1} of ${validMilestones.length}`)
 
         const response = await fetch("/api/milestones", {
           method: "POST",
@@ -122,7 +116,7 @@ export default function NewMilestonePage() {
             due_date: milestone?.deadline,
             status: milestone?.status.toLowerCase(),
             budget: milestone?.budget,
-            ordinal: i + 1, // Use the form index as ordinal
+            ordinal: i + 1,
           }),
         })
 
@@ -132,10 +126,7 @@ export default function NewMilestonePage() {
 
         const created = await response.json()
         createdMilestones.push(created)
-        console.log(`[v0] Successfully created milestone ${i + 1}:`, created)
       }
-
-      console.log("[v0] All milestones created successfully:", createdMilestones)
 
       toast({
         title: "Milestones Created",
@@ -144,7 +135,6 @@ export default function NewMilestonePage() {
 
       router.push("/admin")
     } catch (error) {
-      console.error("Error creating milestones:", error)
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to create milestones. Please try again.",

@@ -1,5 +1,6 @@
 "use client"
 
+import { memo } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { formatCompactCurrency, toNumberSafe } from "@/lib/client-utils"
 import type { Project } from "@/lib/types"
@@ -8,16 +9,10 @@ interface StatsCardsProps {
   projects: Project[]
 }
 
-export function StatsCards({ projects }: StatsCardsProps) {
+export const StatsCards = memo(function StatsCards({ projects }: StatsCardsProps) {
   const totalFunds = projects.reduce((sum, project) => {
-    return sum + toNumberSafe(project.funding_amount);
-  }, 0);
-
-  console.log("[v0] Total Funds Calculation:", {
-    projectCount: projects.length,
-    totalFunds,
-    fundingAmounts: projects.map((p) => ({ id: p.id, name: p.name, amount: p.funding_amount })),
-  })
+    return sum + toNumberSafe(project.funding_amount)
+  }, 0)
 
   const activeProjects = projects.filter((p) => p.status.toLowerCase() === "active").length
 
@@ -45,4 +40,4 @@ export function StatsCards({ projects }: StatsCardsProps) {
       </Card>
     </div>
   )
-}
+})

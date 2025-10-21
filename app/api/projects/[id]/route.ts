@@ -28,7 +28,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     return NextResponse.json(project)
   } catch (error) {
-    console.error("Error fetching project:", error)
     return NextResponse.json({ error: "Failed to fetch project" }, { status: 500 })
   }
 }
@@ -44,7 +43,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     if (!end_date && duration && start_date) {
       const parsedEndDate = parseDurationToEndDate(start_date, duration)
       if (parsedEndDate) {
-        calculatedEndDate = parsedEndDate.toISOString().split("T")[0] // Format as YYYY-MM-DD
+        calculatedEndDate = parsedEndDate.toISOString().split("T")[0]
       }
     }
 
@@ -64,7 +63,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     return NextResponse.json(project)
   } catch (error) {
-    console.error("Error updating project:", error)
     return NextResponse.json({ error: "Failed to update project" }, { status: 500 })
   }
 }
@@ -77,7 +75,6 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 
     return NextResponse.json({ message: "Project deleted successfully" })
   } catch (error) {
-    console.error("Error deleting project:", error)
     return NextResponse.json({ error: "Failed to delete project" }, { status: 500 })
   }
 }

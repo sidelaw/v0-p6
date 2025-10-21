@@ -98,7 +98,6 @@ export default function NewProjectPage() {
 
       router.push(`/admin/projects/${project.id}/milestones/new`)
     } catch (error) {
-      console.error("Error creating project:", error)
       toast({
         title: "Error",
         description: "Failed to create project. Please try again.",
