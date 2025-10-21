@@ -3,12 +3,12 @@ import type { Milestone, Project } from "@/lib/types"
 
 export function formatCompactCurrency(amount: number): string {
   if (amount >= 1_000_000) {
-    return `$${(amount / 1_000_000).toFixed(1)}M`
+    return `${(amount / 1_000_000).toFixed(1)}M CKB`
   }
   if (amount >= 1_000) {
-    return `$${(amount / 1_000).toFixed(1)}K`
+    return `${(amount / 1_000).toFixed(1)}K CKB`
   }
-  return `$${amount.toFixed(0)}`
+  return `${amount.toFixed(0)} CKB`
 }
 
 export function filterProjects(projects: Project[], searchTerm: string): Project[] {
@@ -28,28 +28,27 @@ export function filterProjects(projects: Project[], searchTerm: string): Project
 }
 
 export function toNumberSafe(val: unknown): number {
-  if (val == null) return 0;
-  if (typeof val === "number") return Number.isFinite(val) ? val : 0;
-  if (typeof val === "bigint") return Number(val);
+  if (val == null) return 0
+  if (typeof val === "number") return Number.isFinite(val) ? val : 0
+  if (typeof val === "bigint") return Number(val)
   if (typeof val === "string") {
     // strip currency symbols/commas/spaces
-    const n = Number(val.replace(/[^0-9.-]/g, ""));
-    return Number.isFinite(n) ? n : 0;
+    const n = Number(val.replace(/[^0-9.-]/g, ""))
+    return Number.isFinite(n) ? n : 0
   }
   // Prisma.Decimal or similar
   // decimal.js has toNumber / toString
-  const anyVal = val as any;
+  const anyVal = val as any
   if (anyVal?.toNumber && typeof anyVal.toNumber === "function") {
-    const n = anyVal.toNumber();
-    return Number.isFinite(n) ? n : 0;
+    const n = anyVal.toNumber()
+    return Number.isFinite(n) ? n : 0
   }
   if (anyVal?.toString && typeof anyVal.toString === "function") {
-    const n = Number(anyVal.toString());
-    return Number.isFinite(n) ? n : 0;
+    const n = Number(anyVal.toString())
+    return Number.isFinite(n) ? n : 0
   }
-  return 0;
+  return 0
 }
-
 
 export function sortProjects(projects: Project[], sortOrder: string): Project[] {
   const sorted = [...projects]
@@ -79,7 +78,10 @@ export function paginateItems<T>(items: T[], currentPage: number, itemsPerPage: 
 }
 
 function norm(s?: string | null): string {
-  return (s || "").trim().toLowerCase().replace(/[_\s]+/g, "-")
+  return (s || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[_\s]+/g, "-")
 }
 
 function isOverdueMilestone(m: Milestone): boolean {
@@ -111,9 +113,7 @@ function isAtRisk(projectId: number, all: Milestone[]): boolean {
 
 /** Choose the "current milestone" status for filtering buckets */
 function currentMilestoneStatus(projectId: number, all: Milestone[]): string {
-  const list = all
-    .filter((m) => m.project_id === projectId)
-    .sort((a, b) => (a.ordinal ?? a.id) - (b.ordinal ?? b.id))
+  const list = all.filter((m) => m.project_id === projectId).sort((a, b) => (a.ordinal ?? a.id) - (b.ordinal ?? b.id))
   if (list.length === 0) return "pending"
   const current = list.find((m) => norm(m.status) !== "completed")
   return current ? norm(current.status) : "completed"
@@ -127,26 +127,16 @@ function currentMilestoneStatus(projectId: number, all: Milestone[]): string {
  * - "not-started"-> FILTER only projects whose current milestone status is "not-started"/"pending"
  *                   (order: created_at DESC)
  */
-export function filterAndSortProjects(
-  projects: Project[],
-  milestones: Milestone[],
-  sortOrder: string
-): Project[] {
+export function filterAndSortProjects(projects: Project[], milestones: Milestone[], sortOrder: string): Project[] {
   const sortedCopy = [...projects]
 
   switch (sortOrder) {
     case "oldest":
-      return sortedCopy.sort(
-        (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-      )
+      return sortedCopy.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
 
     case "overdue": {
-      const only = sortedCopy.filter((p) =>
-        milestones.some((m) => m.project_id === p.id && isOverdueMilestone(m))
-      )
-      return only.sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      )
+      const only = sortedCopy.filter((p) => milestones.some((m) => m.project_id === p.id && isOverdueMilestone(m)))
+      return only.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     }
 
     case "at-risk": {
@@ -170,15 +160,11 @@ export function filterAndSortProjects(
         return norm(p.status) === "completed"
       })
       // Optional: most recently updated first
-      return only.sort(
-        (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-      )
+      return only.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
     }
 
     // "new" (default)
     default:
-      return sortedCopy.sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      )
+      return sortedCopy.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
   }
 }
