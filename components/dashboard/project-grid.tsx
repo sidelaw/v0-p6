@@ -1,14 +1,20 @@
-import React from "react"
+// components/dashboard/project-grid.tsx
+"use client"
+
+import React, { useMemo } from "react"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { StatusBadge } from "@/components/ui/status-badge"
 import { ProjectProgress } from "@/components/ui/project-progress"
-import { formatCompactCurrency, capitalizeStatus } from "@/lib/utils"
-import type { Project } from "@/hooks/use-projects"
+import { formatCompactCurrency } from "@/lib/client-utils"
+import { capitalizeStatus } from "@/lib/utils"
+import type { Milestone, Project } from "@/lib/types"
 
+/** Props: pass paginated Projects and the (global or page) Milestones list */
 interface ProjectGridProps {
   projects: Project[]
+  milestones: Milestone[]
 }
 
 /** normalize statuses like "Not Started", "not_started" -> "not-started" */
@@ -17,17 +23,15 @@ function norm(s?: string) {
 }
 
 /**
- * Choose a display status with priority:
- *  1) active (from either project.active_milestone_status or project.status)
- *  2) otherwise use active_milestone_status if present
- *  3) otherwise fall back to project.status
+ * Fallback display status when a project has no milestones:
+ * Priority:
+ *  1) "active" if project.active_milestone_status OR project.status is "active"
+ *  2) otherwise project.active_milestone_status (if present)
+ *  3) otherwise project.status
  *  4) default "pending"
- *
- * This ensures when you have both an "active" and "not-started" milestone,
- * the badge shows "active".
  */
 function pickDisplayStatus(p: Project): string {
-  const ms = norm((p as any).active_milestone_status) // keep type flexible if field is not typed in Project
+  const ms = norm((p as any).active_milestone_status) // keep type flexible
   const ps = norm(p.status)
 
   if (ms === "active" || ps === "active") return "active"
@@ -36,11 +40,37 @@ function pickDisplayStatus(p: Project): string {
   return "pending"
 }
 
-export const ProjectGrid = React.memo(function ProjectGrid({ projects }: ProjectGridProps) {
+/** Given milestones for a project, compute the status to show on the card */
+function computeStatusFromMilestones(list: Milestone[]): string {
+  if (!list.length) return "pending"
+  // First milestone that is NOT completed is the "current"
+  const current = list.find((m) => m.status?.toLowerCase() !== "completed")
+  return current ? current.status.toLowerCase() : "completed"
+}
+
+export const ProjectGrid = React.memo(function ProjectGrid({ projects, milestones }: ProjectGridProps) {
+  // Index milestones by project_id once for O(1) lookups while rendering each card
+  const milestonesByProject = useMemo(() => {
+    const map = new Map<number, Milestone[]>()
+    for (const m of milestones) {
+      const arr = map.get(m.project_id)
+      if (arr) arr.push(m)
+      else map.set(m.project_id, [m])
+    }
+    // Keep each project's milestones sorted (ordinal ASC, fallback to id)
+    for (const arr of map.values()) {
+      arr.sort((a, b) => (a.ordinal ?? a.id) - (b.ordinal ?? b.id))
+    }
+    return map
+  }, [milestones])
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
       {projects.map((project) => {
-        const displayStatus = pickDisplayStatus(project)
+        const msList = milestonesByProject.get(project.id) ?? []
+        const displayStatus = msList.length
+          ? computeStatusFromMilestones(msList)
+          : pickDisplayStatus(project)
 
         return (
           <Card
@@ -65,7 +95,6 @@ export const ProjectGrid = React.memo(function ProjectGrid({ projects }: Project
                     })()}
                   </h3>
 
-                  {/* Use the prioritized status */}
                   <StatusBadge status={displayStatus} className="text-xs" />
                 </div>
 
@@ -84,9 +113,15 @@ export const ProjectGrid = React.memo(function ProjectGrid({ projects }: Project
 
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-white text-xs md:text-sm" style={{ fontFamily: "var(--font-sf-rounded)" }}>
-                    Budget: {project.funding_amount ? formatCompactCurrency(project.funding_amount) : "N/A"}
+                    Budget:{" "}
+                    {typeof project.funding_amount === "number"
+                      ? formatCompactCurrency(project.funding_amount)
+                      : "N/A"}
                   </span>
-                  <span className="text-muted-foreground text-xs md:text-sm" style={{ fontFamily: "var(--font-sf-rounded)" }}>
+                  <span
+                    className="text-muted-foreground text-xs md:text-sm"
+                    style={{ fontFamily: "var(--font-sf-rounded)" }}
+                  >
                     {project.duration || "Duration: TBD"}
                   </span>
                 </div>
@@ -99,7 +134,10 @@ export const ProjectGrid = React.memo(function ProjectGrid({ projects }: Project
                   >
                     {capitalizeStatus(project.category || "General")}
                   </Badge>
-                  <span className="text-white font-semibold text-xs md:text-sm" style={{ fontFamily: "var(--font-sf-rounded)" }}>
+                  <span
+                    className="text-white font-semibold text-xs md:text-sm"
+                    style={{ fontFamily: "var(--font-sf-rounded)" }}
+                  >
                     {Math.round(project.progress_percentage || 0)}%
                   </span>
                 </div>

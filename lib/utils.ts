@@ -73,7 +73,7 @@ export function getStatusColor(status: string): string {
     case "pending":
       return "bg-gray-900 text-gray-100"
     case "not started":
-      return "bg-yellow-900 text-slate-100"
+      return "bg-orange-900 text-orange-100"
     default:
       return "bg-gray-900 text-gray-100"
   }
@@ -185,6 +185,8 @@ export function shouldShowProgressBar(status: string): boolean {
   const normalized = (status || "").toLowerCase().replace(/[_-]+/g, " ").trim()
   return normalized !== "complete" && normalized !== "completed" && normalized !== "not started"
 }
+
+
 
 export function parseDurationToEndDate(startDate: string | Date, duration: string): Date | null {
   if (!startDate || !duration) return null

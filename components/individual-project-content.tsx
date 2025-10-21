@@ -10,18 +10,17 @@ import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import MilestoneDetailsPopup from "@/components/milestone-details-popup"
 import RecentUpdatePopup from "@/components/recent-update-popup"
-import { useProject } from "@/hooks/use-project"
 import { useMobile } from "@/hooks/use-mobile"
-import { useProjects } from "@/hooks/use-projects"
 import {
   capitalizeStatus,
   getStatusColor,
-  getTimeLeft,
   formatDate,
   getOverdueMessage,
   shouldShowProgressBar,
   formatCompactCurrency,
 } from "@/lib/utils"
+import { useProject } from "@/hooks/use-project"
+import { useProjects } from "@/hooks/use-projects"
 
 // ---------- Activity types / helpers ----------
 type Activity = {
@@ -359,7 +358,7 @@ export default function IndividualProjectContent() {
 
   return (
     <div className="min-h-screen bg-background text-white">
-      <div className="pt-20 md:pt:24">
+      <div className="pt-20 md:pt-24">
         <div className="container mx-auto px-4 md:px-6 py-4">
           <div className="flex items-center gap-4 mb-4">
             <Link href="/" className="flex items-center gap-2 text-white hover:text-[#10c0dd] transition-colors">
@@ -476,8 +475,8 @@ export default function IndividualProjectContent() {
                   style={{ borderRadius: "var(--wui-border-radius-m)" }}
                 >
                   <CardContent className="p-4 text-center">
-                    <h3 className="text-sm text-muted-foreground mb-1">Time Left</h3>
-                    <p className="text-lg md:text-xl font-bold text-white">{getTimeLeft(project.end_date)}</p>
+                    <h3 className="text-sm text-muted-foreground mb-1">End Date</h3>
+                    <p className="text-lg md:text-xl font-bold text-white">{formatDate(project.end_date)}</p>
                   </CardContent>
                 </Card>
               </div>

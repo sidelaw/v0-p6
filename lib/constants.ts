@@ -1,5 +1,5 @@
 // Pagination
-export const ITEMS_PER_PAGE_DESKTOP = 20
+export const ITEMS_PER_PAGE_DESKTOP = 10
 export const ITEMS_PER_PAGE_MOBILE = 3
 export const MILESTONES_PER_PAGE_DESKTOP = 3
 export const MILESTONES_PER_PAGE_MOBILE = 1
